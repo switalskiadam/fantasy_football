@@ -1,0 +1,270 @@
+#Load XML package to extract data from website
+library(XML)
+#website url
+
+url <- paste("http://fftoday.com/stats/playerstats.php?Season=2016&GameWeek=1&PosID=10")
+##Position IDs
+QB = 10 
+RB = 20 
+WR = 30 
+TE = 40 
+
+
+#load data from website to a dataframe
+statstable <- readHTMLTable(url,skip.rows= 2,which=11)
+
+#review data
+head(statstable)
+#add correct headers
+columnheaders <- c("Name","Team","Games Played","Comp","Att","Yards","TD","INT","Rush Att","Rush Yards","Rush TD","FPts","FPts/Game")
+colnames(statstable) <- columnheaders
+#add in current week
+statstable2 <- cbind(week = 3,statstable)
+
+qbheaders <- c("Name","Team","Games Played","Comp","Att","Yards","TD","INT","Rush Att","Rush Yards","Rush TD","FPts","FPts/Game")
+rbheaders <- c("Name","Team","Games Played","Rush Att","Yards","TD","Targets","Rec","Rec Yds","Rec TD","FPts","FPts/Game")
+wrheaders <- c("Name","Team","Games Played","Targets","Rec","Rec Yds","Rec TD","Rush Att","Yards","TD","FPts","FPts/Game")
+teheaders <- c("Name","Team","Games Played","Targets","Rec","Rec Yds","Rec TD","FPts","FPts/Game")
+kheaders <- c("Name","Team","Games Played","FGM","FGA","FG%","EPM","EPA","FPts","FPts/Game")
+
+
+
+
+#looped version
+
+#which position?
+
+
+############################## Wide Recievers #####################################
+pos <- WR
+pos2 <- "WR"
+
+columnheaders <- wrheaders
+for (i in 1:11){
+  #see if a dataset exists  
+  if(!exists("tempstattable3")){
+    #load first dataset if one does not exist
+    url <- paste("http://fftoday.com/stats/playerstats.php?Season=2016&GameWeek=",i,"&PosID=",pos,"&LeagueID=17&order_by=FFPts&sort_order=DESC&cur_page=0",sep="")
+    tempstattable0 <- readHTMLTable(url,
+                                    skip.rows= 2,
+                                    which=11)
+    url <- paste("http://fftoday.com/stats/playerstats.php?Season=2016&GameWeek=",i,"&PosID=",pos,"&LeagueID=17&order_by=FFPts&sort_order=DESC&cur_page=1",sep="")
+    tempstattable1 <- readHTMLTable(url,
+                                    skip.rows= 2,
+                                    which=11)
+    url <- paste("http://fftoday.com/stats/playerstats.php?Season=2016&GameWeek=",i,"&PosID=",pos,"&LeagueID=17&order_by=FFPts&sort_order=DESC&cur_page=2",sep="")
+    tempstattable2 <- readHTMLTable(url,
+                                    skip.rows= 2,
+                                    which=11)
+    
+    tempstattable3 <- rbind(tempstattable0,tempstattable1,tempstattable2)
+    
+    #add columnheaders
+    colnames(tempstattable3) <- columnheaders
+    #add additional columns
+    tempstattable4 <- cbind(Week = i, Position = pos2, Rank = 1:nrow(tempstattable3),tempstattable3)
+    if(!exists("tempdataset")){
+      rm(tempdataset)
+    }else{
+      
+    }
+    tempdataset <- tempstattable4
+  }else{
+    url <- paste("http://fftoday.com/stats/playerstats.php?Season=2016&GameWeek=",i,"&PosID=",pos,"&LeagueID=17&order_by=FFPts&sort_order=DESC&cur_page=0",sep="")
+    tempstattable0 <- readHTMLTable(url,
+                                    skip.rows= 2,
+                                    which=11)
+    url <- paste("http://fftoday.com/stats/playerstats.php?Season=2016&GameWeek=",i,"&PosID=",pos,"&LeagueID=17&order_by=FFPts&sort_order=DESC&cur_page=1",sep="")
+    tempstattable1 <- readHTMLTable(url,
+                                    skip.rows= 2,
+                                    which=11)
+    url <- paste("http://fftoday.com/stats/playerstats.php?Season=2016&GameWeek=",i,"&PosID=",pos,"&LeagueID=17&order_by=FFPts&sort_order=DESC&cur_page=2",sep="")
+    tempstattable2 <- readHTMLTable(url,
+                                    skip.rows= 2,
+                                    which=11)
+    
+    
+    tempstattable3 <- rbind(tempstattable0,tempstattable1,tempstattable2)
+    
+    colnames(tempstattable3) <- columnheaders
+    tempstattable5 <- cbind(Week = i,Position = pos2,Rank = 1:nrow(tempstattable3),tempstattable3)
+    #row bind the two tables
+    tempdataset <- rbind(tempdataset,tempstattable5)
+  }
+}
+rm(tempstattable0,tempstattable1,tempstattable2,tempstattable3,tempstattable4,tempstattable5)
+
+#Remove random character from name column
+tempdataset$Name <- gsub("Â.","",tempdataset[,"Name"])
+#Remove number value from name
+tempdataset$Name <- gsub('[0-9]+..',"",tempdataset[,"Name"])
+
+write.csv(tempdataset,
+          file = paste("C:/Users/aswitalski/Desktop/",pos2,"Stats.csv",sep=""),
+          row.names = FALSE)
+rm(tempdataset)
+
+
+############################## Quarter Backs #####################################
+pos <- QB
+pos2 <- "QB"
+
+columnheaders <- qbheaders
+for (i in 1:11){
+  #see if a dataset exists  
+  if(!exists("tempstattable2")){
+    #load first dataset if one does not exist
+    url <- paste("http://fftoday.com/stats/playerstats.php?Season=2016&GameWeek=",i,"&PosID=",pos,"&LeagueID=17",sep="")
+    tempstattable <- readHTMLTable(url,
+                                   skip.rows= 2,
+                                   which=11)
+    #add columnheaders
+    colnames(tempstattable) <- columnheaders
+    #add additional columns
+    tempstattable2 <- cbind(Week = i, Position = pos2, Rank = 1:nrow(tempstattable),tempstattable)
+    if(!exists("tempdataset")){
+      rm(tempdataset)
+    }else{
+      
+    }
+    tempdataset <- tempstattable2
+  }else{
+    url <- paste("http://fftoday.com/stats/playerstats.php?Season=2016&GameWeek=",i,"&PosID=",pos,"&LeagueID=17",sep="")
+    tempstattable <- readHTMLTable(url,
+                                   skip.rows= 2,
+                                   which=11)
+    colnames(tempstattable) <- columnheaders
+    tempstattable3 <- cbind(Week = i,Position = pos2,Rank = 1:nrow(tempstattable),tempstattable)
+    #row bind the two tables
+    tempdataset <- rbind(tempdataset,tempstattable3)
+  }
+}
+rm(tempstattable,tempstattable2,tempstattable3)
+
+#Remove random character from name column
+tempdataset$Name <- gsub("Â.","",tempdataset[,"Name"])
+#Remove number value from name
+tempdataset$Name <- gsub('[0-9]+..',"",tempdataset[,"Name"])
+
+write.csv(tempdataset,
+          file = paste("C:/Users/aswitalski/Desktop/",pos2,"Stats.csv",sep=""),
+          row.names = FALSE)
+rm(tempdataset)
+
+############################## Running Backs #####################################
+pos <- RB
+pos2 <- "RB"
+
+columnheaders <- rbheaders
+for (i in 1:11){
+  #see if a dataset exists  
+  if(!exists("tempstattable3")){
+    #load first dataset if one does not exist
+    url <- paste("http://fftoday.com/stats/playerstats.php?Season=2016&GameWeek=",i,"&PosID=",pos,"&LeagueID=17&order_by=FFPts&sort_order=DESC&cur_page=0",sep="")
+    tempstattable0 <- readHTMLTable(url,
+                                   skip.rows= 2,
+                                   which=11)
+    url <- paste("http://fftoday.com/stats/playerstats.php?Season=2016&GameWeek=",i,"&PosID=",pos,"&LeagueID=17&order_by=FFPts&sort_order=DESC&cur_page=1",sep="")
+    tempstattable1 <- readHTMLTable(url,
+                                   skip.rows= 2,
+                                   which=11)
+    tempstattable2 <- rbind(tempstattable0,tempstattable1)
+    
+    #add columnheaders
+    colnames(tempstattable2) <- columnheaders
+    #add additional columns
+    tempstattable3 <- cbind(Week = i, Position = pos2, Rank = 1:nrow(tempstattable2),tempstattable2)
+    if(!exists("tempdataset")){
+      rm(tempdataset)
+    }else{
+      
+    }
+    tempdataset <- tempstattable3
+  }else{
+    url <- paste("http://fftoday.com/stats/playerstats.php?Season=2016&GameWeek=",i,"&PosID=",pos,"&LeagueID=17&order_by=FFPts&sort_order=DESC&cur_page=0",sep="")
+    tempstattable0 <- readHTMLTable(url,
+                                   skip.rows= 2,
+                                   which=11)
+    url <- paste("http://fftoday.com/stats/playerstats.php?Season=2016&GameWeek=",i,"&PosID=",pos,"&LeagueID=17&order_by=FFPts&sort_order=DESC&cur_page=1",sep="")
+    tempstattable1 <- readHTMLTable(url,
+                                    skip.rows= 2,
+                                    which=11)
+    tempstattable2 <- rbind(tempstattable0,tempstattable1)
+    
+    colnames(tempstattable2) <- columnheaders
+    tempstattable4 <- cbind(Week = i,Position = pos2,Rank = 1:nrow(tempstattable2),tempstattable2)
+    #row bind the two tables
+    tempdataset <- rbind(tempdataset,tempstattable4)
+  }
+}
+rm(tempstattable0,tempstattable1,tempstattable2,tempstattable3,tempstattable4)
+
+#Remove random character from name column
+tempdataset$Name <- gsub("Â.","",tempdataset[,"Name"])
+#Remove number value from name
+tempdataset$Name <- gsub('[0-9]+..',"",tempdataset[,"Name"])
+
+write.csv(tempdataset,
+          file = paste("C:/Users/aswitalski/Desktop/",pos2,"Stats.csv",sep=""),
+          row.names = FALSE)
+rm(tempdataset)
+
+
+############################## Tight Ends #####################################
+pos <- TE
+pos2 <- "TE"
+
+columnheaders <- teheaders
+for (i in 1:11){
+  #see if a dataset exists  
+  if(!exists("tempstattable3")){
+    #load first dataset if one does not exist
+    url <- paste("http://fftoday.com/stats/playerstats.php?Season=2016&GameWeek=",i,"&PosID=",pos,"&LeagueID=17&order_by=FFPts&sort_order=DESC&cur_page=0",sep="")
+    tempstattable0 <- readHTMLTable(url,
+                                    skip.rows= 2,
+                                    which=11)
+    url <- paste("http://fftoday.com/stats/playerstats.php?Season=2016&GameWeek=",i,"&PosID=",pos,"&LeagueID=17&order_by=FFPts&sort_order=DESC&cur_page=1",sep="")
+    tempstattable1 <- readHTMLTable(url,
+                                    skip.rows= 2,
+                                    which=11)
+    tempstattable2 <- rbind(tempstattable0,tempstattable1)
+    
+    #add columnheaders
+    colnames(tempstattable2) <- columnheaders
+    #add additional columns
+    tempstattable3 <- cbind(Week = i, Position = pos2, Rank = 1:nrow(tempstattable2),tempstattable2)
+    if(!exists("tempdataset")){
+      rm(tempdataset)
+    }else{
+      
+    }
+    tempdataset <- tempstattable3
+  }else{
+    url <- paste("http://fftoday.com/stats/playerstats.php?Season=2016&GameWeek=",i,"&PosID=",pos,"&LeagueID=17&order_by=FFPts&sort_order=DESC&cur_page=0",sep="")
+    tempstattable0 <- readHTMLTable(url,
+                                    skip.rows= 2,
+                                    which=11)
+    url <- paste("http://fftoday.com/stats/playerstats.php?Season=2016&GameWeek=",i,"&PosID=",pos,"&LeagueID=17&order_by=FFPts&sort_order=DESC&cur_page=1",sep="")
+    tempstattable1 <- readHTMLTable(url,
+                                    skip.rows= 2,
+                                    which=11)
+    tempstattable2 <- rbind(tempstattable0,tempstattable1)
+    
+    colnames(tempstattable2) <- columnheaders
+    tempstattable4 <- cbind(Week = i,Position = pos2,Rank = 1:nrow(tempstattable2),tempstattable2)
+    #row bind the two tables
+    tempdataset <- rbind(tempdataset,tempstattable4)
+  }
+}
+rm(tempstattable0,tempstattable1,tempstattable2,tempstattable3,tempstattable4)
+
+
+#Remove random character from name column
+tempdataset$Name <- gsub("Â.","",tempdataset[,"Name"])
+#Remove number value from name
+tempdataset$Name <- gsub('[0-9]+..',"",tempdataset[,"Name"])
+
+write.csv(tempdataset,
+          file = paste("C:/Users/aswitalski/Desktop/",pos2,"Stats.csv",sep=""),
+          row.names = FALSE)
+rm(tempdataset)
