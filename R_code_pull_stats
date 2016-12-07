@@ -8,7 +8,7 @@ QB = 10
 RB = 20 
 WR = 30 
 TE = 40 
-
+K = 80
 
 #load data from website to a dataframe
 statstable <- readHTMLTable(url,skip.rows= 2,which=11)
@@ -20,6 +20,14 @@ columnheaders <- c("Name","Team","Games Played","Comp","Att","Yards","TD","INT",
 colnames(statstable) <- columnheaders
 #add in current week
 statstable2 <- cbind(week = 3,statstable)
+
+######load this before#####
+QB = 10 
+RB = 20 
+WR = 30 
+TE = 40 
+K = 80
+
 
 qbheaders <- c("Name","Team","Games Played","Comp","Att","Yards","TD","INT","Rush Att","Rush Yards","Rush TD","FPts","FPts/Game")
 rbheaders <- c("Name","Team","Games Played","Rush Att","Yards","TD","Targets","Rec","Rec Yds","Rec TD","FPts","FPts/Game")
@@ -100,16 +108,16 @@ tempdataset$Name <- gsub("Â.","",tempdataset[,"Name"])
 tempdataset$Name <- gsub('[0-9]+..',"",tempdataset[,"Name"])
 
 write.csv(tempdataset,
-          file = paste("C:/Users/aswitalski/Desktop/",pos2,"Stats.csv",sep=""),
+          file = paste("C:/Users/aswitalski/Desktop/FF/",pos2,"Stats.csv",sep=""),
           row.names = FALSE)
 rm(tempdataset)
 
 
-############################## Quarter Backs #####################################
-pos <- QB
-pos2 <- "QB"
+############################## Quarter Backs or Kickers #####################################
+pos <- K
+pos2 <- "K"
 
-columnheaders <- qbheaders
+columnheaders <- kheaders
 for (i in 1:11){
   #see if a dataset exists  
   if(!exists("tempstattable2")){
@@ -147,7 +155,7 @@ tempdataset$Name <- gsub("Â.","",tempdataset[,"Name"])
 tempdataset$Name <- gsub('[0-9]+..',"",tempdataset[,"Name"])
 
 write.csv(tempdataset,
-          file = paste("C:/Users/aswitalski/Desktop/",pos2,"Stats.csv",sep=""),
+          file = paste("C:/Users/aswitalski/Desktop/FF/",pos2,"Stats.csv",sep=""),
           row.names = FALSE)
 rm(tempdataset)
 
@@ -205,7 +213,7 @@ tempdataset$Name <- gsub("Â.","",tempdataset[,"Name"])
 tempdataset$Name <- gsub('[0-9]+..',"",tempdataset[,"Name"])
 
 write.csv(tempdataset,
-          file = paste("C:/Users/aswitalski/Desktop/",pos2,"Stats.csv",sep=""),
+          file = paste("C:/Users/aswitalski/Desktop/FF/",pos2,"Stats.csv",sep=""),
           row.names = FALSE)
 rm(tempdataset)
 
@@ -265,6 +273,6 @@ tempdataset$Name <- gsub("Â.","",tempdataset[,"Name"])
 tempdataset$Name <- gsub('[0-9]+..',"",tempdataset[,"Name"])
 
 write.csv(tempdataset,
-          file = paste("C:/Users/aswitalski/Desktop/",pos2,"Stats.csv",sep=""),
+          file = paste("C:/Users/aswitalski/Desktop/FF/",pos2,"Stats.csv",sep=""),
           row.names = FALSE)
 rm(tempdataset)
